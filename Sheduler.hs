@@ -6,9 +6,14 @@ import System.Exit
 import System.IO
 -- atleast one of these is extranious
 
+--progressing down the file new input variables will have earlier already processed sections removed,
+--the variables are named for the element of a proper input file that should appear next, not elegant but has uses
+
 main = do                                                       
     args <- getArgs     --get file name argument
 
+--test io validity    
+    
     --Two checks on File, and argument validity
     if 2 /= length args
         then do { putStrLn "Invalid Arguments, Format: programName Inputfile OutputFile" ; exitSuccess } 
@@ -18,58 +23,43 @@ main = do
     if temp1 /= True
         then do { putStrLn "This File Does Not Exist, Goodbye" ; exitSuccess }
         else return ()
+    
+    inputWhole <- readFile (head args)
+    
+    --test name header               
+    if "Name:\n" `isPrefixOf` inputWhole
+        then return ()
+        else do {putStrLn "Invalid file format, faulty name heading" ; exitSuccess }
         
-    fileLines <- fmap lines (readFile (head args))  --create list of all lines from input file
+    print (sheduleName concat(inputWhole))
+    
+{-   
+    if "forced partial assignment:\n" `isPrefixOf` inputForcedPartialHeader
+        then return ()
+        else do {putStrLn "Invalid file format, faulty forced partial assignment heading" ; exitSuccess }
+    inputForcedPartials <- stripPrefix "forced partial assignment:\n" inputForcedPartialHeader
+-} 
     
     --main code
-
-    return () -- variable declaration cannot end do block, so stub return just in case
-  
-
-
-  
-  
-  
-  
-  
-  
-  
---WIP  
-  
-    --recursive search for FPA, checks for error in file, returns list of FPA tuples
---getForcedPartials :: [[String]] -> [( a, b)]
---getForcedPartials f
---    | length f == 0 = do {putStrLn "File Error, No Forced Partial Assignment section" ; exitSystem }
---    | fpa           = tuplizeFPA (tail f) -- make tuples out of further lines, function name is flexible
---    | not fpa       = getForcedPartials (tail f)
---    where fpa = "forced partial assignment:" == (head f)
     
-    --Does not catch all tuple errors
---tuplizeFPA :: [[String]] -> [( a, b)]
---tuplizeFPA f 
---    | length (head f) == 0  = []
---    | head (head f) /= "("  = do {putStrLn "File Error, Invalid Tuple Form" ; exitSystem }
---    | tail (head f) /= ")"  = do {putStrLn "File Error, Invalid Tuple Form" ; exitSystem }
---    | notElem "," head f    = do {putStrLn "File Error, Invalid Tuple Form" ; exitSystem }
---    | otherwise             = [(a,b) ++ (tuplizeFPA (tail f)) | a = filter isDigit, --can be done better will improve
+    return () -- variable declaration cannot end do block, so stub return just in case, print later
     
+    
+--monads suck so here are functions instead of imperitivity
+    
+    
+sheduleName x = tail $ takeWhile (/= "\n") $ dropWhile (/= "\n") x -- give file as string get shedule name as string
+    
+    
+    
+    
+    
+   
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-                 
+--scrap   
+--fileLines <- fmap lines (readFile (head args))  --create list of all lines from input file probably    
